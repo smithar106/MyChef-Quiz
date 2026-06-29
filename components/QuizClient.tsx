@@ -7,6 +7,7 @@ import {
   ArchetypeId,
   Answer,
   scoreArchetype,
+  computeScores,
 } from "@/lib/quizzes";
 import {
   trackEvent,
@@ -25,6 +26,7 @@ export default function QuizClient() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [archetypeId, setArchetypeId] = useState<ArchetypeId | null>(null);
+  const [scores, setScores] = useState<Record<ArchetypeId, number> | null>(null);
   const [email, setEmail] = useState("");
   const [emailSubmitting, setEmailSubmitting] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
@@ -58,7 +60,9 @@ export default function QuizClient() {
       autoAdvanceTimer.current = setTimeout(() => {
         if (currentStep + 1 >= questions.length) {
           const resultId = scoreArchetype(newAnswers);
+          const resultScores = computeScores(newAnswers);
           setArchetypeId(resultId);
+          setScores(resultScores);
           trackResult(resultId);
           setPhase("calculating");
 
@@ -78,35 +82,46 @@ export default function QuizClient() {
     [phase, currentStep, answers]
   );
 
+  const submitQuizData = useCallback(async (givenEmail: string) => {
+    if (!archetypeId) return;
+
+    if (givenEmail) {
+      trackEmailSubmit(archetypeId);
+    }
+
+    try {
+      await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: givenEmail || null,
+          archetype_id: archetypeId,
+          answers,
+          scores,
+        }),
+      });
+    } catch {
+      // don't block on submit failure
+    }
+  }, [archetypeId, answers, scores]);
+
   const handleEmailSubmit = async () => {
-    if (emailSubmitting) return;
+    if (emailSubmitting || !archetypeId) return;
     setEmailSubmitting(true);
 
-    if (email && archetypeId) {
-      trackEmailSubmit(archetypeId);
-      try {
-        await fetch("/api/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            archetype_id: archetypeId,
-            answers,
-          }),
-        });
-      } catch {
-        // don't block on submit failure
-      }
-    }
+    await submitQuizData(email);
 
     setPhase("result");
     setEmailSubmitting(false);
   };
 
-  const handleEmailSkip = () => {
-    if (archetypeId) {
-      trackEmailSkip(archetypeId);
-    }
+  const handleEmailSkip = async () => {
+    if (!archetypeId) return;
+
+    trackEmailSkip(archetypeId);
+
+    await submitQuizData("");
+
     setPhase("result");
   };
 

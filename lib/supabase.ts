@@ -6,6 +6,7 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 --   email text,
 --   archetype_id text not null,
 --   answers jsonb,
+--   scores jsonb,
 --   created_at timestamptz default now()
 -- );
 */

@@ -9,7 +9,13 @@ export async function POST(request: NextRequest) {
       email,
       archetype_id,
       answers,
-    }: { email?: string; archetype_id: ArchetypeId; answers: unknown } = body;
+      scores,
+    }: {
+      email?: string;
+      archetype_id: ArchetypeId;
+      answers: unknown;
+      scores: unknown;
+    } = body;
 
     const session_id =
       crypto.randomUUID?.() ??
@@ -22,7 +28,7 @@ export async function POST(request: NextRequest) {
           email: email || null,
           archetype_id,
           answers,
-          created_at: new Date().toISOString(),
+          scores,
         });
       } catch {
         // Don't block the user on supabase failure

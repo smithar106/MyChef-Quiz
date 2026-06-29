@@ -190,8 +190,8 @@ export const archetypes: Record<ArchetypeId, Archetype> = {
 
 export type Answer = { questionId: string; label: string };
 
-export function scoreArchetype(answers: Answer[]): ArchetypeId {
-  const totals: Record<string, number> = {
+export function computeScores(answers: Answer[]): Record<ArchetypeId, number> {
+  const totals: Record<ArchetypeId, number> = {
     efficient: 0,
     minimiser: 0,
     feeder: 0,
@@ -204,9 +204,15 @@ export function scoreArchetype(answers: Answer[]): ArchetypeId {
     const choice = question.answers.find((a) => a.label === answer.label);
     if (!choice) continue;
     for (const [key, val] of Object.entries(choice.scores)) {
-      totals[key] = (totals[key] || 0) + val;
+      totals[key as ArchetypeId] = (totals[key as ArchetypeId] || 0) + val;
     }
   }
+
+  return totals;
+}
+
+export function scoreArchetype(answers: Answer[]): ArchetypeId {
+  const totals = computeScores(answers);
 
   const ordered: ArchetypeId[] = [
     "efficient",
