@@ -21,6 +21,8 @@ export default function RootLayout({
           @keyframes stepIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
           @keyframes resultIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
           .progress-bar { transition: width 0.3s ease; }
+          .cta-pulse { box-shadow: 0 0 0 0 rgba(255,107,53,0.4); animation: pulse 2.5s infinite; }
+          @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,107,53,0.4); } 70% { box-shadow: 0 0 0 12px rgba(255,107,53,0); } 100% { box-shadow: 0 0 0 0 rgba(255,107,53,0); } }
         `}</style>
       </head>
       <body

@@ -8,7 +8,7 @@ interface ResultPageProps {
 }
 
 export default function ResultPage({ archetype }: ResultPageProps) {
-  const appStoreUrl = process.env.NEXT_PUBLIC_APP_STORE_URL || "#";
+  const appStoreUrl = process.env.NEXT_PUBLIC_APP_STORE_URL || "https://apps.apple.com/app/mychef";
 
   const handleShare = async () => {
     trackShare(archetype.id);
@@ -110,7 +110,7 @@ export default function ResultPage({ archetype }: ResultPageProps) {
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => trackCTAClick()}
-        className="w-full text-center font-semibold text-white text-base rounded-2xl block"
+        className="cta-pulse w-full text-center font-semibold text-white text-base rounded-2xl block"
         style={{
           backgroundColor: "#FF6B35",
           padding: "18px",

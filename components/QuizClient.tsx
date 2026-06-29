@@ -210,7 +210,7 @@ export default function QuizClient() {
 
             <div
               className={
-                currentStep >= 3
+                (currentStep === 0 || currentStep >= 3)
                   ? "grid grid-cols-2 gap-3"
                   : "flex flex-col gap-3"
               }
