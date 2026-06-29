@@ -6,10 +6,6 @@ export function trackEvent(
   console.log(`[track] ${event}`, properties || {});
 }
 
-export function trackPageView(page: string) {
-  trackEvent("page_view", { page });
-}
-
 export function trackAnswer(questionId: string, label: string) {
   trackEvent("quiz_answer", { question: questionId, answer: label });
 }
